@@ -1,14 +1,16 @@
 from django.db import models
 from users.models import User
+from encryption_algorithms import morse_code
 
 
 class Encryption(models.Model):
     """Модель шифрования."""
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='encryptions')
+    user = models.ForeignKey(
+        User, null=True, on_delete=models.SET_NULL, related_name='encryptions')
     text = models.TextField(max_length=2000)
     encryption_algorithm = models.CharField(max_length=100)
     key = models.CharField(max_length=100, null=True)
-    is_encryption = models.BooleanField() # True, если шифруем, False, если дешифруем
+    is_encryption = models.BooleanField()  # True - шифруем, False - дешифруем
 
     class Meta:
         verbose_name = 'Шифрование'
@@ -33,10 +35,10 @@ class Encryption(models.Model):
         pass
 
     def encrypt_morse(text):
-        pass
+        morse_code.encode(text)
 
     def decrypt_morse(text):
-        pass
+        morse_code.decode(text)
 
     def encrypt_qr(text):
         pass
