@@ -35,10 +35,10 @@ class Encryption(models.Model):
         pass
 
     def encrypt_morse(text):
-        morse_code.encode(text)
+        return morse_code.encode(text)
 
     def decrypt_morse(text):
-        morse_code.decode(text)
+        return morse_code.decode(text)
 
     def encrypt_qr(text):
         pass
