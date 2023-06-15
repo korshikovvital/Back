@@ -1,6 +1,7 @@
-from django.contrib.auth.models import AbstractUser, UserManager
-from django.db import models
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.core.validators import MinLengthValidator
+from django.db import models
 
 
 class CustomUserManager(UserManager):
@@ -35,9 +36,13 @@ class User(AbstractUser):
 
     username = models.CharField('username', null=True, max_length=100)
     email = models.EmailField('email', unique=True, max_length=250)
+    question = models.CharField('question', max_length=100)
+    answer = models.CharField(
+        'answer', max_length=50, validators=[MinLengthValidator(1)])
+    token = models.CharField('token', max_length=32)
     objects = CustomUserManager()
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['question', 'answer']
 
     class Meta:
         verbose_name = 'Пользователь'

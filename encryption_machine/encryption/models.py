@@ -1,6 +1,7 @@
 from django.db import models
+
 from users.models import User
-from encryption_algorithms import morse_code
+from .encryption_algorithms import morse_code
 
 
 class Encryption(models.Model):
