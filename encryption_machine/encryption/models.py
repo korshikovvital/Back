@@ -1,7 +1,7 @@
 from django.db import models
-
 from users.models import User
-from .encryption_algorithms import morse_code
+
+from .encryption_algorithms import aes, morse_code
 
 
 class Encryption(models.Model):
@@ -18,10 +18,10 @@ class Encryption(models.Model):
         verbose_name_plural = 'Шифрования'
 
     def encrypt_aes(text, key):
-        pass
+        return aes.encrypt(text, key)
 
     def decrypt_aes(text, key):
-        pass
+        return aes.decrypt(text, key)
 
     def encrypt_caesar(text, key):
         pass

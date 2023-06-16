@@ -3,7 +3,6 @@ from rest_framework.routers import DefaultRouter
 
 from .views import EncryptionViewSet
 
-
 app_name = 'encryption'
 
 router = DefaultRouter()

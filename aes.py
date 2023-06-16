@@ -5,7 +5,7 @@ from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 
 
-def encrypt(text, key):
+def encrypt(key, text):
     key = SHA256.new(key).digest()
     IV = Random.new().read(AES.block_size)
     encryptor = AES.new(key, AES.MODE_CBC, IV)
@@ -15,7 +15,7 @@ def encrypt(text, key):
     return base64.b64encode(data).decode("latin-1")
 
 
-def decrypt(text, key):
+def decrypt(key, text):
     text = base64.b64decode(text.encode("latin-1"))
     key = SHA256.new(key).digest()
     IV = text[:AES.block_size]
@@ -24,4 +24,4 @@ def decrypt(text, key):
     padding = data[-1]
     if data[-padding:] != bytes([padding]) * padding:
         raise ValueError("Invalid padding...")
-    return data[:-padding].decode('utf-8')
+    return data[:-padding]
