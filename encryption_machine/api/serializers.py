@@ -3,7 +3,6 @@ from secrets import token_hex
 from django.contrib.auth.password_validation import validate_password
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-
 from users.models import User
 
 
