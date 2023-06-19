@@ -62,7 +62,7 @@ def cipher_decrypt(ciphertext, key):
     return decrypted
 
 user_text = input('Введите любой текст на русском\n')
-user_key = int(input('Введите любое число\n'))
+user_key = int(input('Введите любое число\n')) 
 
 # шифрование
 print(cipher_encrypt(user_text, user_key))
