@@ -1,7 +1,7 @@
 from django.db import models
+from .encryption_algorithms import aes, morse_code, caesar_code
 from users.models import User
 
-from .encryption_algorithms import aes, morse_code
 
 
 class Encryption(models.Model):
@@ -24,10 +24,11 @@ class Encryption(models.Model):
         return aes.decrypt(text, key)
 
     def encrypt_caesar(text, key):
-        pass
+        return code_caesar.encryption_mixin(text, key, is_encryption=True)
 
     def decrypt_caesar(text, key):
-        pass
+        return code_caesar.encryption_mixin(text, key, is_encryption=False)
+     
 
     def encrypt_dsa(text, key):
         pass
