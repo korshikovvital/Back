@@ -2,11 +2,13 @@ from secrets import token_hex
 
 from django.contrib.auth.password_validation import validate_password
 from django.shortcuts import get_object_or_404
+from encryption.models import Encryption
 from rest_framework import serializers
 from users.models import User
 
 
 class ResetPasswordReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для ответа на запрос на восстановление пароля."""
 
     class Meta:
         model = User
@@ -14,6 +16,7 @@ class ResetPasswordReadSerializer(serializers.ModelSerializer):
 
 
 class ResetPasswordWriteSerializer(serializers.ModelSerializer):
+    """Сериализатор для запроса на восстановление пароля."""
 
     class Meta:
         model = User
@@ -27,6 +30,8 @@ class ResetPasswordWriteSerializer(serializers.ModelSerializer):
 
 
 class ResetPasswordQuestionReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для ответа после успешного вода ответа на вопрос."""
+
     token = serializers.SerializerMethodField()
 
     class Meta:
@@ -41,6 +46,8 @@ class ResetPasswordQuestionReadSerializer(serializers.ModelSerializer):
 
 
 class ResetPasswordQuestionWriteSerializer(serializers.ModelSerializer):
+    """Сериализатор для ввода ответа на секретный вопрос."""
+
     id = serializers.IntegerField()
 
     class Meta:
@@ -63,6 +70,8 @@ class ResetPasswordQuestionWriteSerializer(serializers.ModelSerializer):
 
 
 class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
+    """Сериализатор для смены пароля на новый."""
+
     new_password = serializers.CharField(
         required=True, write_only=True, min_length=8)
     re_new_password = serializers.CharField(
@@ -87,3 +96,17 @@ class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
                 'Password mismatch')
         validate_password(value)
         return value
+
+
+class EncryptionReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для запроса к истории шифрований."""
+
+    encrypted_text = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Encryption
+        fields = (
+            'text', 'algorithm', 'key', 'is_encryption', 'encrypted_text')
+
+    def get_encrypted_text(self, obj):
+        return obj.get_algorithm()

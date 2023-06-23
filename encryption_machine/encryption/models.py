@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import User
 
-from .encryption_algorithms import aes, morse_code
+from .encryption_algorithms import aes, morse_code, qr_code
 
 
 class Encryption(models.Model):
@@ -9,7 +9,7 @@ class Encryption(models.Model):
     user = models.ForeignKey(
         User, null=True, on_delete=models.SET_NULL, related_name='encryptions')
     text = models.TextField(max_length=2000)
-    encryption_algorithm = models.CharField(max_length=100)
+    algorithm = models.CharField(max_length=100)
     key = models.CharField(max_length=100, null=True)
     is_encryption = models.BooleanField()  # True - шифруем, False - дешифруем
 
@@ -17,38 +17,50 @@ class Encryption(models.Model):
         verbose_name = 'Шифрование'
         verbose_name_plural = 'Шифрования'
 
-    def encrypt_aes(text, key):
+    def encrypt_aes(self, text, key):
         return aes.encrypt(text, key)
 
-    def decrypt_aes(text, key):
+    def decrypt_aes(self, text, key):
         return aes.decrypt(text, key)
 
-    def encrypt_caesar(text, key):
+    def encrypt_caesar(self, text, key):
         pass
 
-    def decrypt_caesar(text, key):
+    def decrypt_caesar(self, text, key):
         pass
 
-    def encrypt_dsa(text, key):
-        pass
-
-    def decrypt_dsa(text, key):
-        pass
-
-    def encrypt_morse(text):
+    def encrypt_morse(self, text, *args):
         return morse_code.encode(text)
 
-    def decrypt_morse(text):
+    def decrypt_morse(self, text, *args):
         return morse_code.decode(text)
 
-    def encrypt_qr(text):
+    def encrypt_qr(self, text, *args):
+        return qr_code.qr_code_generation(text)
+
+    def encrypt_vigenere(self, text, key):
         pass
 
-    def decrypt_qr(text):
+    def decrypt_vigenere(self, text, key):
         pass
 
-    def encrypt_vigenere(text, key):
-        pass
+    def get_algorithm(self):
+        ENCRYPTION_DICT = {
+            'aes': self.encrypt_aes,
+            'caesar': self.encrypt_caesar,
+            'morse': self.encrypt_morse,
+            'qr': self.encrypt_qr,
+            'vigenere': self.encrypt_vigenere
+        }
 
-    def decrypt_vigenere(text, key):
-        pass
+        DECRYPTION_DICT = {
+            'aes': self.decrypt_aes,
+            'caesar': self.decrypt_caesar,
+            'morse': self.decrypt_morse,
+            'vigenere': self.decrypt_vigenere
+        }
+
+        if self.is_encryption:
+            return ENCRYPTION_DICT[self.algorithm](self.text, self.key)
+        else:
+            return DECRYPTION_DICT[self.algorithm](self.text, self.key)

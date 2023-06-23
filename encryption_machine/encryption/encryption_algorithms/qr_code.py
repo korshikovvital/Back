@@ -1,7 +1,8 @@
 """Выбрана эта библиотека, как самая популярная https://pypi.org/project/qrcode/"""
-import qrcode
 import base64
 from io import BytesIO
+
+import qrcode
 
 
 def qr_code_generation(text: str) -> str:
