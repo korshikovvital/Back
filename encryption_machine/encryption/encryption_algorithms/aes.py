@@ -6,6 +6,8 @@ from Crypto.Hash import SHA256
 
 
 def encrypt(text, key):
+    text = text.encode('utf-8')
+    key = key.encode('utf-8')
     key = SHA256.new(key).digest()
     IV = Random.new().read(AES.block_size)
     encryptor = AES.new(key, AES.MODE_CBC, IV)
@@ -16,6 +18,7 @@ def encrypt(text, key):
 
 
 def decrypt(text, key):
+    key = key.encode('utf-8')
     text = base64.b64decode(text.encode("latin-1"))
     key = SHA256.new(key).digest()
     IV = text[:AES.block_size]

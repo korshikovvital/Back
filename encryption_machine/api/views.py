@@ -1,12 +1,15 @@
 from django.shortcuts import get_object_or_404
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status
+from encryption.models import Encryption
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.models import User
 
-from .serializers import (ResetPasswordConfirmSerializer,
+from .serializers import (EncryptionReadSerializer,
+                          ResetPasswordConfirmSerializer,
                           ResetPasswordQuestionReadSerializer,
                           ResetPasswordQuestionWriteSerializer,
                           ResetPasswordReadSerializer,
@@ -23,7 +26,7 @@ from .serializers import (ResetPasswordConfirmSerializer,
             properties={"field_name": openapi.Schema(type="string")})})
 @api_view(['POST'])
 def reset_password(request):
-    """Запроса на восстановление пароля."""
+    """Запрос на восстановление пароля."""
     if 'email' not in request.data.keys():
         return Response(
             {'email': ["This field is required."]},
@@ -97,3 +100,11 @@ def reset_password_confirm(request):
     user.save()
     return Response(
         {'Пароль успешно изменен'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class EncryptionListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = EncryptionReadSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return Encryption.objects.filter(user=self.request.user.id)
