@@ -8,15 +8,8 @@ services:
     env_file:
       - ./.env
 
-#   frontend:
-#     image: dmitry8/foodgram_frontend:v1
-#     volumes:
-#       - ../frontend/:/app/result_build/
-#     depends_on:
-#       - db
-
   backend:
-    image: encryption23/encryption_machine:latest
+    image: dmitry8/encryption_machine:latest
     restart: always
     volumes:
       - static_value:/app/static/
