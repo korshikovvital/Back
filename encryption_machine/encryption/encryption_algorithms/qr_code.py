@@ -1,4 +1,7 @@
-"""Выбрана эта библиотека, как самая популярная https://pypi.org/project/qrcode/"""
+"""
+Выбрана эта библиотека, как самая популярная
+https://pypi.org/project/qrcode/
+"""
 import base64
 from io import BytesIO
 
@@ -13,8 +16,8 @@ def qr_code_generation(text: str) -> str:
     # Сохранение изображения в буфер
     img.save(buffered)
     # Преобразование изображения в строку base64
-    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
-    return img_str
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
 
 """
 При переходе по qr коду у пользователя открывается страница браузера, далее:

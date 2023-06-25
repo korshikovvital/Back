@@ -4,7 +4,6 @@ def encryption_mixin(text, key, is_encryption):
         if symbol.isupper():
             symbol_index = ord(symbol) + ord('А')
             if is_encryption:
-                # сдвинуть текущий символ влево на позицию клавиши, чтобы получить его исходное положение
                 symbol_position = (symbol_index + key) % 32 + ord('А')
             else:
                 symbol_position = (symbol_index - key) % 32 + ord('А')
