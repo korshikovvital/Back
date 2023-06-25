@@ -56,7 +56,7 @@ jobs:
         with:
           context: ./encryption_machine
           push: true
-          tags: encryption23/encryption_backend:latest
+          tags: dmitry8/encryption_backend:latest
 
   deploy:
     runs-on: ubuntu-latest
