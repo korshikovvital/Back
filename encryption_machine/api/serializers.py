@@ -12,7 +12,7 @@ class ResetPasswordReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id',  'question')
+        fields = ('id', 'question')
 
 
 class ResetPasswordWriteSerializer(serializers.ModelSerializer):
@@ -52,7 +52,7 @@ class ResetPasswordQuestionWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id',  'answer')
+        fields = ('id', 'answer')
 
     def validate_answer(self, value):
         user = get_object_or_404(
@@ -80,7 +80,7 @@ class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id',  'token', 're_new_password', 'new_password')
+        fields = ('id', 'token', 're_new_password', 'new_password')
 
     def validate_token(self, value):
         user = get_object_or_404(

@@ -45,7 +45,7 @@ class Encryption(models.Model):
         pass
 
     def get_algorithm(self):
-        ENCRYPTION_DICT = {
+        encription_dict = {
             'aes': self.encrypt_aes,
             'caesar': self.encrypt_caesar,
             'morse': self.encrypt_morse,
@@ -53,14 +53,13 @@ class Encryption(models.Model):
             'vigenere': self.encrypt_vigenere
         }
 
-        DECRYPTION_DICT = {
+        decription_dict = {
             'aes': self.decrypt_aes,
             'caesar': self.decrypt_caesar,
             'morse': self.decrypt_morse,
             'vigenere': self.decrypt_vigenere
         }
-
         if self.is_encryption:
-            return ENCRYPTION_DICT[self.algorithm](self.text, self.key)
+            return encription_dict[self.algorithm](self.text, self.key)
         else:
-            return DECRYPTION_DICT[self.algorithm](self.text, self.key)
+            return decription_dict[self.algorithm](self.text, self.key)
