@@ -70,6 +70,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            cd encryption_mashine
             sudo docker-compose down --remove-orphans
             sudo docker-compose rm -f backend frontend
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/encryption_backend
