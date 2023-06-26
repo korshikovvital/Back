@@ -1,0 +1,45 @@
+# docker-compose
+version: '3.9'
+services:
+  db:
+    image: postgres:13.4
+    volumes:
+      - postgres:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+
+#   frontend:
+#     image: dmitry8/foodgram_frontend:v1
+#     volumes:
+#       - ../frontend/:/app/result_build/
+#     depends_on:
+#       - db
+
+  backend:
+    image: encryption23/encryption_machine:latest
+    restart: always
+    volumes:
+      - static_value:/app/static/
+      - media_value:/app/media/
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
+  nginx:
+    image: nginx:1.19.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./frontend/build:/usr/share/nginx/html/
+      - static_value:/var/html/static/
+      - media_value:/var/html/media/
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  static_value:
+  media_value:
+  postgres:
