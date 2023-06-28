@@ -1,4 +1,4 @@
-def vigenere_codec(text: str, key: str, codec: int = 1, lang: str = 'nd'):
+def vigenere_codec(text: str, key: str, codec: int = 1):
     '''
     Код Виженера.
     Для повышения устойчивости все слова переводятся в верхний регистр,
@@ -11,24 +11,24 @@ def vigenere_codec(text: str, key: str, codec: int = 1, lang: str = 'nd'):
     '''
 
     result = ''
-
+    key = key.upper()
     # Словарь алфавитов.
     # название_языка : [код_первого_символа, длина_алфавита]
     lang_dict = {'en': [64, 26],
                  'ru': [1039, 32]}
 
     # Определяем язык ключа. Язык по умолчанию nd (not defined)
-    if lang == 'nd':
-        for letter in key:
-            for lang_test, [lang_start, lang_len] in lang_dict.items():
-                if 0 <= (ord(letter) - lang_start) <= lang_len:
-                    lang = lang_test
-                    break
-            if lang != 'nd':
+    lang = 'nd'
+    for letter in key:
+        for lang_test, [lang_start, lang_len] in lang_dict.items():
+            if 0 <= (ord(letter) - lang_start) <= lang_len:
+                lang = lang_test
                 break
+        if lang != 'nd':
+            break
 
     # Если язык неизвестен, то текст возвращается в исходном виде.
-    if lang not in lang_dict.keys():
+    if lang == 'nd':
         return (text)
 
     # код первой буквы алфавита
@@ -49,9 +49,9 @@ def vigenere_codec(text: str, key: str, codec: int = 1, lang: str = 'nd'):
     return result
 
 
-def encode(text: str, key: str, codec: int = 1, lang: str = 'nd'):
-    return vigenere_codec(text, key, 1, lang)
+def encode(text: str, key: str):
+    return vigenere_codec(text, key, 1)
 
 
-def decode(text: str, key: str, codec: int = 1, lang: str = 'nd'):
-    return vigenere_codec(text, key, -1, lang)
+def decode(text: str, key: str):
+    return vigenere_codec(text, key, -1)
