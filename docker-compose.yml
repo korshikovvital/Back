@@ -9,7 +9,7 @@ services:
       - ./.env
 
   backend:
-    image: encryption23/encryption_machine:latest
+    image: dmitry8/encryption_machine:latest
     restart: always
     volumes:
       - static_value:/app/static/
