@@ -8,7 +8,8 @@ ignore =
     # line break before binary operator
     W503,
     R505,
-    F401
+    F401,
+    R504    
 
 per-file-ignores =
     # line too long (82 > 79 characters)
