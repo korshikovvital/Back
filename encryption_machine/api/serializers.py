@@ -128,7 +128,8 @@ class EncryptionSerializer(serializers.ModelSerializer):
 
     def validate_algorithm(self, value):
         if value not in ('aes', 'caesar', 'morse', 'qr', 'vigenere'):
-            raise serializers.ValidationError("Шрифт содержит неправильное название")
+            raise serializers.ValidationError(
+                "Шрифт содержит неправильное название")
         return value
 
     def create(self, validated_data):
@@ -138,10 +139,9 @@ class EncryptionSerializer(serializers.ModelSerializer):
         else:
             encryption = Encryption.objects.create(**validated_data)
         return encryption
-    
+
     def to_representation(self, instance):
         obj = super().to_representation(instance)
         obj_1 = Encryption.objects.get(id=obj['id'])
         encrypted_text = obj_1.get_algorithm()
         return {'encrypted_text': encrypted_text}
-    

@@ -5,7 +5,6 @@ from encryption.models import Encryption
 from encryption.serializer import EncryptionSerializer
 
 
-
 class EncryptionViewSet(ModelViewSet):
     """Вьюсет для шифрования"""
     queryset = Encryption.objects.all()

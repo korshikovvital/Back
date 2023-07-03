@@ -109,9 +109,9 @@ class EncryptionListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         return Encryption.objects.filter(user=self.request.user.id)
 
+
 class EncryptionViewSet(viewsets.ModelViewSet):
     """Вьюсет для шифрования"""
     queryset = Encryption.objects.all()
     serializer_class = EncryptionSerializer
     http_method_names = ["post"]
-    
