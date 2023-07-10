@@ -1,9 +1,9 @@
 # from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
 from encryption.models import Encryption
 from encryption.serializer import EncryptionSerializer
-
 
 
 class EncryptionViewSet(ModelViewSet):
