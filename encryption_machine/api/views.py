@@ -44,8 +44,9 @@ class PasswordResetViewSet(viewsets.GenericViewSet):
         email = request.data['email']
         context = {'request': request}
         user = get_object_or_404(User, email=email)
+        serializer = self.get_serializer(user, context=context)
         return Response(
-            serializer(user, context=context).data,
+            serializer.data,
             status=status.HTTP_200_OK)
 
     @swagger_auto_schema(

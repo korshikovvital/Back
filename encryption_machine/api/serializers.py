@@ -17,6 +17,7 @@ class ResetPasswordReadSerializer(serializers.ModelSerializer):
 
 class ResetPasswordWriteSerializer(serializers.ModelSerializer):
     """Сериализатор для запроса на восстановление пароля."""
+    email = serializers.EmailField()
 
     class Meta:
         model = User
