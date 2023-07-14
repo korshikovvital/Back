@@ -1,10 +1,9 @@
 from secrets import token_hex
 
 from django.contrib.auth.password_validation import validate_password
+from encryption.models import Encryption
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-from encryption.models import Encryption
 from users.models import User
 
 

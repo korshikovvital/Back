@@ -3,13 +3,12 @@ from secrets import token_hex
 from django.shortcuts import get_object_or_404
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from encryption.models import Encryption
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-from encryption.models import Encryption
 from users.models import User
 
 from .serializers import (EncryptionReadSerializer, EncryptionSerializer,
@@ -32,8 +31,7 @@ class PasswordResetViewSet(viewsets.GenericViewSet):
             return ResetPasswordWriteSerializer
         if self.action == "reset_password_question":
             return ResetPasswordQuestionWriteSerializer
-        if self.action == "reset_password_confirm":
-            return ResetPasswordConfirmSerializer
+        return ResetPasswordConfirmSerializer
 
     @swagger_auto_schema(
         methods=["POST"],

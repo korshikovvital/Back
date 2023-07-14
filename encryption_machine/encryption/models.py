@@ -1,5 +1,4 @@
 from django.db import models
-
 from users.models import User
 
 from .encryption_algorithms import (aes, caesar_code, morse_code, qr_code,
