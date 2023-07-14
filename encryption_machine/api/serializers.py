@@ -152,6 +152,7 @@ class EncryptionSerializer(serializers.ModelSerializer):
         if value not in ('aes', 'caesar', 'morse', 'qr', 'vigenere'):
             raise serializers.ValidationError(
                 "Шифр содержит неправильное название")
+
         return value
 
     def create(self, validated_data):
