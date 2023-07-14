@@ -1,10 +1,9 @@
 from secrets import token_hex
 
 from django.contrib.auth.password_validation import validate_password
+from encryption.models import Encryption
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-from encryption.models import Encryption
 from users.models import User
 
 
@@ -37,13 +36,15 @@ class ResetPasswordWriteSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         if not User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("User with this email does not exist")
+            raise serializers.ValidationError(
+                "User with this email does not exist")
         return value
 
     def to_representation(self, instance):
         request = self.context.get("request")
         context = {"request": request}
-        return ResetPasswordReadSerializer(instance=instance, context=context).data
+        return ResetPasswordReadSerializer(
+            instance=instance, context=context).data
 
 
 class ResetPasswordQuestionReadSerializer(serializers.ModelSerializer):
@@ -73,10 +74,12 @@ class ResetPasswordQuestionWriteSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if not User.objects.filter(id=data["id"]).exists():
-            raise serializers.ValidationError("Пользователя с таким id не существует")
+            raise serializers.ValidationError(
+                "Пользователя с таким id не существует")
         user = User.objects.get(id=data["id"])
         if data["answer"] != user.answer:
-            raise serializers.ValidationError("Неверный ответ на секретный вопрос")
+            raise serializers.ValidationError(
+                "Неверный ответ на секретный вопрос")
         return data
 
     def to_representation(self, instance):
@@ -90,7 +93,8 @@ class ResetPasswordQuestionWriteSerializer(serializers.ModelSerializer):
 class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
     """Сериализатор для смены пароля на новый."""
 
-    new_password = serializers.CharField(required=True, write_only=True, min_length=8)
+    new_password = serializers.CharField(
+        required=True, write_only=True, min_length=8)
     re_new_password = serializers.CharField(
         required=True, write_only=True, min_length=8
     )
@@ -102,10 +106,12 @@ class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if not User.objects.filter(id=data["id"]).exists():
-            raise serializers.ValidationError("Пользователя с таким id не существует")
+            raise serializers.ValidationError(
+                "Пользователя с таким id не существует")
         user = User.objects.get(id=data["id"])
         if data["token"] != user.token:
-            raise serializers.ValidationError("Неверный токен восстановления пароля")
+            raise serializers.ValidationError(
+                "Неверный токен восстановления пароля")
         return data
 
     def validate_new_password(self, value):
@@ -122,7 +128,8 @@ class EncryptionReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Encryption
-        fields = ("text", "algorithm", "key", "is_encryption", "encrypted_text")
+        fields = (
+            "text", "algorithm", "key", "is_encryption", "encrypted_text")
 
     def get_encrypted_text(self, obj):
         return obj.get_algorithm()
@@ -137,7 +144,8 @@ class EncryptionSerializer(serializers.ModelSerializer):
 
     def validate_algorithm(self, value):
         if value not in ("aes", "caesar", "morse", "qr", "vigenere"):
-            raise serializers.ValidationError("Шифр содержит неправильное название")
+            raise serializers.ValidationError(
+                "Шифр содержит неправильное название")
 
         return value
 

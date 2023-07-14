@@ -3,24 +3,20 @@ from secrets import token_hex
 from django.shortcuts import get_object_or_404
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from encryption.models import Encryption
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-from encryption.models import Encryption
 from users.models import User
 
-from .serializers import (
-    EncryptionReadSerializer,
-    EncryptionSerializer,
-    ResetPasswordConfirmSerializer,
-    ResetPasswordQuestionReadSerializer,
-    ResetPasswordQuestionWriteSerializer,
-    ResetPasswordReadSerializer,
-    ResetPasswordWriteSerializer,
-)
+from .serializers import (EncryptionReadSerializer, EncryptionSerializer,
+                          ResetPasswordConfirmSerializer,
+                          ResetPasswordQuestionReadSerializer,
+                          ResetPasswordQuestionWriteSerializer,
+                          ResetPasswordReadSerializer,
+                          ResetPasswordWriteSerializer)
 
 
 class CustomJWTCreateView(TokenObtainPairView):
@@ -35,8 +31,7 @@ class PasswordResetViewSet(viewsets.GenericViewSet):
             return ResetPasswordWriteSerializer
         if self.action == "reset_password_question":
             return ResetPasswordQuestionWriteSerializer
-        if self.action == "reset_password_confirm":
-            return ResetPasswordConfirmSerializer
+        return ResetPasswordConfirmSerializer
 
     @swagger_auto_schema(
         methods=["POST"],
@@ -79,7 +74,8 @@ class PasswordResetViewSet(viewsets.GenericViewSet):
         id = request.data["id"]
         context = {"request": request}
         user = get_object_or_404(User, id=id)
-        serializer = self.get_serializer(user, context=context, data=request.data)
+        serializer = self.get_serializer(
+            user, context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -105,7 +101,8 @@ class PasswordResetViewSet(viewsets.GenericViewSet):
         token = token_hex(16)
         user.token = token
         user.save()
-        return Response({"Пароль успешно изменен"}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"Пароль успешно изменен"}, status=status.HTTP_201_CREATED)
 
 
 class EncryptionListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

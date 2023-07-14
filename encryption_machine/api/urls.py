@@ -1,12 +1,8 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (
-    CustomJWTCreateView,
-    EncryptionListViewSet,
-    EncryptionViewSet,
-    PasswordResetViewSet,
-)
+from .views import (CustomJWTCreateView, EncryptionListViewSet,
+                    EncryptionViewSet, PasswordResetViewSet)
 
 app_name = "api"
 

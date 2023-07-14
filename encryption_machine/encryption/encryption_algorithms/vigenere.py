@@ -1,3 +1,6 @@
+NOT_DEFINED_LANG = "nd"
+
+
 def vigenere_codec(text: str, key: str, codec: int = 1):
     """
     Код Виженера.
@@ -8,8 +11,6 @@ def vigenere_codec(text: str, key: str, codec: int = 1):
     опционально: параметр codec для определения
     направления шифрования (1 - шифровка(умолч.)/ -1 - дешифровка),
     """
-
-    NOT_DEFINED_LANG = "nd"
 
     result = ""
     key = key.upper()
