@@ -2,9 +2,20 @@ from secrets import token_hex
 
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from encryption.models import Encryption
 from users.models import User
+
+
+class CustomJWTCreateSerializer(TokenObtainPairSerializer):
+    """Кастомный сериализатор для создания jwt токена.
+
+    Переопределяет текст ответа при ошибке."""
+
+    default_error_messages = {
+        "no_active_account": "Такой пользователь не зарегистирован"
+    }
 
 
 class ResetPasswordReadSerializer(serializers.ModelSerializer):

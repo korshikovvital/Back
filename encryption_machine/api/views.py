@@ -7,6 +7,7 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from encryption.models import Encryption
 from users.models import User
@@ -17,6 +18,12 @@ from .serializers import (EncryptionReadSerializer, EncryptionSerializer,
                           ResetPasswordQuestionWriteSerializer,
                           ResetPasswordReadSerializer,
                           ResetPasswordWriteSerializer)
+
+
+class CustomJWTCreateView(TokenObtainPairView):
+    """Кастомный вьюсет для создания jwt токена."""
+
+    _serializer_class = 'api.serializers.CustomJWTCreateSerializer'
 
 
 class PasswordResetViewSet(viewsets.GenericViewSet):
@@ -94,6 +101,7 @@ class PasswordResetViewSet(viewsets.GenericViewSet):
 
 
 class EncryptionListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """Вьюсет для истории шифрований."""
     serializer_class = EncryptionReadSerializer
     permission_classes = (IsAuthenticated,)
 
