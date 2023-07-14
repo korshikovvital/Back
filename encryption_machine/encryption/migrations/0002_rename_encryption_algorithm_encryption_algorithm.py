@@ -4,15 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('encryption', '0001_initial'),
+        ("encryption", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='encryption',
-            old_name='encryption_algorithm',
-            new_name='algorithm',
+            model_name="encryption",
+            old_name="encryption_algorithm",
+            new_name="algorithm",
         ),
     ]

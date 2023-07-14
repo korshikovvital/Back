@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,18 +14,34 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Encryption',
+            name="Encryption",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.TextField(max_length=2000)),
-                ('encryption_algorithm', models.CharField(max_length=100)),
-                ('key', models.CharField(max_length=100, null=True)),
-                ('is_encryption', models.BooleanField()),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='encryptions', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField(max_length=2000)),
+                ("encryption_algorithm", models.CharField(max_length=100)),
+                ("key", models.CharField(max_length=100, null=True)),
+                ("is_encryption", models.BooleanField()),
+                (
+                    "user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="encryptions",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Шифрование',
-                'verbose_name_plural': 'Шифрования',
+                "verbose_name": "Шифрование",
+                "verbose_name_plural": "Шифрования",
             },
         ),
     ]
