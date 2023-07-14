@@ -9,6 +9,8 @@ def vigenere_codec(text: str, key: str, codec: int = 1):
     направления шифрования (1 - шифровка(умолч.)/ -1 - дешифровка),
     '''
 
+    NOT_DEFINED_LANG = 'nd'
+
     result = ''
     key = key.upper()
     # Словарь алфавитов.
@@ -16,18 +18,18 @@ def vigenere_codec(text: str, key: str, codec: int = 1):
     lang_dict = {'en': [64, 26],
                  'ru': [1039, 32]}
 
-    # Определяем язык ключа. Язык по умолчанию nd (not defined)
-    lang = 'nd'
+    # Определяем язык ключа. Язык по умолчанию NOT_DEFINED_LANG
+    lang = NOT_DEFINED_LANG
     for letter in key:
         for lang_test, [lang_start, lang_len] in lang_dict.items():
             if 0 <= (ord(letter) - lang_start) <= lang_len:
                 lang = lang_test
                 break
-        if lang != 'nd':
+        if lang != NOT_DEFINED_LANG:
             break
 
     # Если язык неизвестен, то текст возвращается в исходном виде.
-    if lang == 'nd':
+    if lang == NOT_DEFINED_LANG:
         return (text)
 
     # код первой буквы алфавита
@@ -35,14 +37,20 @@ def vigenere_codec(text: str, key: str, codec: int = 1):
     # длина алфавита
     alphabet_length = lang_dict[lang][1]
 
+    # Очищаем ключ от символов, не принадлежащих алфавиту
+    new_key = ''
+    for letter in key:
+        if zero_letter < ord(letter) < zero_letter + alphabet_length:
+            new_key += letter
+
     # Шифрование предполагает сдвиг кода буквы на число,
     # соответствующее коду соответствующей буквы ключа.
     i = 0
     for letter in text.upper():
         if zero_letter < ord(letter) < zero_letter + alphabet_length:
-            result += chr((ord(key[i]) * codec - 1 + ord(letter)
+            result += chr((ord(new_key[i]) * codec - 1 + ord(letter)
                            - 2 * zero_letter) % alphabet_length + zero_letter)
-            i = i + 1 if i < len(key) - 1 else 0
+            i = i + 1 if i < len(new_key) - 1 else 0
         else:
             result += letter
     return result
