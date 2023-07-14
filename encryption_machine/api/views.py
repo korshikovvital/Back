@@ -12,15 +12,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from encryption.models import Encryption
 from users.models import User
 
-from .serializers import (
-    EncryptionReadSerializer,
-    EncryptionSerializer,
-    ResetPasswordConfirmSerializer,
-    ResetPasswordQuestionReadSerializer,
-    ResetPasswordQuestionWriteSerializer,
-    ResetPasswordReadSerializer,
-    ResetPasswordWriteSerializer,
-)
+from .serializers import (EncryptionReadSerializer, EncryptionSerializer,
+                          ResetPasswordConfirmSerializer,
+                          ResetPasswordQuestionReadSerializer,
+                          ResetPasswordQuestionWriteSerializer,
+                          ResetPasswordReadSerializer,
+                          ResetPasswordWriteSerializer)
 
 
 class CustomJWTCreateView(TokenObtainPairView):
@@ -79,7 +76,8 @@ class PasswordResetViewSet(viewsets.GenericViewSet):
         id = request.data["id"]
         context = {"request": request}
         user = get_object_or_404(User, id=id)
-        serializer = self.get_serializer(user, context=context, data=request.data)
+        serializer = self.get_serializer(
+            user, context=context, data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -105,7 +103,8 @@ class PasswordResetViewSet(viewsets.GenericViewSet):
         token = token_hex(16)
         user.token = token
         user.save()
-        return Response({"Пароль успешно изменен"}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"Пароль успешно изменен"}, status=status.HTTP_201_CREATED)
 
 
 class EncryptionListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
