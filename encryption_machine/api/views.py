@@ -1,11 +1,15 @@
+from secrets import token_hex
+
 from django.shortcuts import get_object_or_404
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from encryption.models import Encryption
 from rest_framework import mixins, status, viewsets
-from rest_framework.decorators import api_view
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from encryption.models import Encryption
 from users.models import User
 
 from .serializers import (EncryptionReadSerializer, EncryptionSerializer,
@@ -16,93 +20,88 @@ from .serializers import (EncryptionReadSerializer, EncryptionSerializer,
                           ResetPasswordWriteSerializer)
 
 
-@swagger_auto_schema(
-    methods=['POST'],
-    request_body=ResetPasswordWriteSerializer,
-    responses={
-        status.HTTP_200_OK: ResetPasswordReadSerializer,
-        status.HTTP_400_BAD_REQUEST: openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={"field_name": openapi.Schema(type="string")})})
-@api_view(['POST'])
-def reset_password(request):
-    """Запрос на восстановление пароля."""
-    if 'email' not in request.data.keys():
-        return Response(
-            {'email': ["This field is required."]},
-            status=status.HTTP_400_BAD_REQUEST)
-    email = request.data['email']
-    context = {'request': request}
-    if not User.objects.filter(email=email).exists():
-        return Response(
-            {'email': ['User with this email does not exist']},
-            status=status.HTTP_400_BAD_REQUEST)
-    user = get_object_or_404(User, email=email)
-    return Response(
-        ResetPasswordWriteSerializer(user, context=context).data,
-        status=status.HTTP_200_OK)
+class CustomJWTCreateView(TokenObtainPairView):
+    """Кастомный вьюсет для создания jwt токена."""
+
+    _serializer_class = 'api.serializers.CustomJWTCreateSerializer'
 
 
-@swagger_auto_schema(
-    methods=['POST'],
-    request_body=ResetPasswordQuestionWriteSerializer,
-    responses={
-        status.HTTP_200_OK: ResetPasswordQuestionReadSerializer,
-        status.HTTP_400_BAD_REQUEST: openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={"field_name": openapi.Schema(type="string")})})
-@api_view(['POST'])
-def reset_password_question(request):
-    """Ответа на секретный вопрос при восстановлении пароля."""
-    if 'id' not in request.data.keys():
-        return Response(
-            {'id': ["This field is required."]},
-            status=status.HTTP_400_BAD_REQUEST)
-    if 'answer' not in request.data.keys():
-        return Response(
-            {'answer': ["This field is required."]},
-            status=status.HTTP_400_BAD_REQUEST)
-    id = request.data['id']
-    context = {'request': request}
-    user = get_object_or_404(User, id=id)
-    serializer = ResetPasswordQuestionWriteSerializer(
-        user, context=context, data=request.data)
-    serializer.is_valid(raise_exception=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+class PasswordResetViewSet(viewsets.GenericViewSet):
+    def get_serializer_class(self):
+        if self.action == 'reset_password':
+            return ResetPasswordWriteSerializer
+        if self.action == 'reset_password_question':
+            return ResetPasswordQuestionWriteSerializer
+        if self.action == 'reset_password_confirm':
+            return ResetPasswordConfirmSerializer
 
+    @swagger_auto_schema(
+        methods=['POST'],
+        request_body=ResetPasswordWriteSerializer,
+        responses={
+            status.HTTP_200_OK: ResetPasswordReadSerializer,
+            status.HTTP_400_BAD_REQUEST: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={"field_name": openapi.Schema(type="string")})})
+    @action(methods=['post'], detail=False)
+    def reset_password(self, request):
+        """Запрос на восстановление пароля."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = request.data['email']
+        context = {'request': request}
+        user = get_object_or_404(User, email=email)
+        serializer = self.get_serializer(user, context=context)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK)
 
-@swagger_auto_schema(
-    methods=['POST'],
-    request_body=ResetPasswordConfirmSerializer,
-    responses={
-        status.HTTP_204_NO_CONTENT: 'Password changed successfully',
-        status.HTTP_400_BAD_REQUEST: openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={"field_name": openapi.Schema(type="string")})})
-@api_view(['POST'])
-def reset_password_confirm(request):
-    """Обновления пароля."""
-    if 'id' not in request.data.keys():
+    @swagger_auto_schema(
+        methods=['POST'],
+        request_body=ResetPasswordQuestionWriteSerializer,
+        responses={
+            status.HTTP_200_OK: ResetPasswordQuestionReadSerializer,
+            status.HTTP_400_BAD_REQUEST: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={"field_name": openapi.Schema(type="string")})})
+    @action(methods=['post'], detail=False)
+    def reset_password_question(self, request):
+        """Ответа на секретный вопрос при восстановлении пароля."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        id = request.data['id']
+        context = {'request': request}
+        user = get_object_or_404(User, id=id)
+        serializer = self.get_serializer(
+            user, context=context, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        methods=['POST'],
+        request_body=ResetPasswordConfirmSerializer,
+        responses={
+            status.HTTP_201_CREATED: 'Password changed successfully',
+            status.HTTP_400_BAD_REQUEST: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={"field_name": openapi.Schema(type="string")})})
+    @action(methods=['post'], detail=False)
+    def reset_password_confirm(self, request):
+        """Обновления пароля."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        id = request.data['id']
+        user = get_object_or_404(User, id=id)
+        user.set_password(request.data['new_password'])
+        token = token_hex(16)
+        user.token = token
+        user.save()
         return Response(
-            {'id': ["This field is required."]},
-            status=status.HTTP_400_BAD_REQUEST)
-    id = request.data['id']
-    if not User.objects.filter(id=id).exists():
-        return Response(
-            {'id': ['User with this id does not exist']},
-            status=status.HTTP_400_BAD_REQUEST)
-    context = {'request': request}
-    user = get_object_or_404(User, id=id)
-    serializer = ResetPasswordConfirmSerializer(
-        user, context=context, data=request.data)
-    serializer.is_valid(raise_exception=True)
-    user.set_password(request.data['new_password'])
-    user.save()
-    return Response(
-        {'Пароль успешно изменен'}, status=status.HTTP_204_NO_CONTENT)
+            {'Пароль успешно изменен'}, status=status.HTTP_201_CREATED)
 
 
 class EncryptionListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """Вьюсет для истории шифрований."""
     serializer_class = EncryptionReadSerializer
     permission_classes = (IsAuthenticated,)
 

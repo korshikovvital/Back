@@ -1,8 +1,8 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (EncryptionListViewSet, EncryptionViewSet, reset_password,
-                    reset_password_confirm, reset_password_question)
+from .views import (CustomJWTCreateView, EncryptionListViewSet,
+                    EncryptionViewSet, PasswordResetViewSet)
 
 app_name = 'api'
 
@@ -11,19 +11,11 @@ v1_router.register(
     'users/me/encryptions', EncryptionListViewSet, basename='encryption-list')
 v1_router.register('encryption', EncryptionViewSet, basename='encryption')
 
+v1_router.register('users', PasswordResetViewSet, basename='reset_password')
+
 urlpatterns = [
     path('', include(v1_router.urls)),
-    path('users/reset_password/', reset_password, name='reset_password'),
-    path(
-        'users/reset_password_question/',
-        reset_password_question,
-        name='reset_password_question'
-    ),
-    path(
-        'users/reset_password_confirm/',
-        reset_password_confirm,
-        name='reset_password_confirm'
-    ),
     path('', include('djoser.urls')),
+    path('auth/jwt/create/', CustomJWTCreateView.as_view(), name="jwt-create"),
     path('auth/', include('djoser.urls.jwt'))
 ]
